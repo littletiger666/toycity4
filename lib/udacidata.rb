@@ -44,4 +44,13 @@ class Udacidata
     end
   end
 
+  def self.last(id=1)
+    result = self.all.last(id)
+    if result.length == 1
+      return result[0]
+    else
+      return result
+    end
+  end
+
 end
