@@ -21,7 +21,7 @@ class Udacidata
   def self.find(id)
     data = CSV.read(@@data_path)
     product = data.select { |line| line[0].to_i == id }
-    return self.new({id: product[0][0].to_i}, brand: product[0][1],
+    return self.new({id: product[0][0].to_i, brand: product[0][1],
     name: product[0][2], price: product[0][3]})
   end
 
