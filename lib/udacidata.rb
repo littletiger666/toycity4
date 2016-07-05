@@ -83,7 +83,13 @@ class Udacidata
   end
 
   def self.where(type={})
-    product = self.all.select {|toy| toy.brand == type}
+    product = []
+    all = self.all
+    if type[:brand]
+      product = all.select {|toy| toy.brand == type[:brand]}
+    elsif type[:name]
+      product = all.select {|toy| toy.name == type[:name]}
+    end
     return product
   end
 
