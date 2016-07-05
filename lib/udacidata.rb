@@ -53,4 +53,29 @@ class Udacidata
     end
   end
 
+  def self.destroy(id)
+    product = self.find(id)
+    data = CSV.read(@@data_path).drop(1)
+    data.delete_at(product.id)
+    CSV.open(@@data_path, "wb") do |csv|
+      csv << ["id", "brand", "product", "price"]
+    end
+    CSV.open(@@data_path, "ab") do |csv|
+      data.each do |product|
+        csv << product
+      end
+    end
+    return product
+  end
+
+
+
+
+
+
+
+
+
+
+
 end
