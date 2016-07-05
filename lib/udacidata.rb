@@ -68,11 +68,19 @@ class Udacidata
     return product
   end
 
+  def self.find_by_brand(brand)
+    data = CSV.read(@@data_path)
+    product = data.select { |line| line[1] == brand }
+    return self.new ({id: product[0][0].to_i, brand: product[0][1],
+    name: product[0][2], price: product[0][3]})
+  end
 
-
-
-
-
+  def self.find_by_name(name)
+    data = CSV.read(@@data_path)
+    product = data.select { |line| line[2] == name }
+    return self.new ({id: product[0][0].to_i, brand: product[0][1],
+    name: product[0][2], price: product[0][3]})
+  end
 
 
 
