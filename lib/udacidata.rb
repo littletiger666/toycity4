@@ -18,6 +18,16 @@ class Udacidata
     return item
   end
 
+  def self.all
+    products = []
+    data = CSV.read(@@data_path).drop(1)
+    data.each do |line|
+      products << self.new({id: line[0], brand: line[1], name: line[2], price: line[3]})
+    end
+    return products
+  end
+
+
   def self.find(id)
     data = CSV.read(@@data_path)
     product = data.select { |line| line[0].to_i == id }
