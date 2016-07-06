@@ -1,1 +1,6 @@
-# Your custom error classes will be placed here
+module ToyCityErrors
+
+  class InvalidIdError < StandardError
+  end
+
+end

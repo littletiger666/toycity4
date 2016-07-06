@@ -30,9 +30,13 @@ class Udacidata
 
   def self.find(id)
     data = CSV.read(@@data_path)
-    product = data.select { |line| line[0].to_i == id }
-    return self.new ({id: product[0][0].to_i, brand: product[0][1],
-    name: product[0][2], price: product[0][3]})
+    if id > data.length-1
+      raise ToyCityErrors::InvalidIdError, "not a valid ID"
+    else
+      product = data.select { |line| line[0].to_i == id }
+      return self.new ({id: product[0][0].to_i, brand: product[0][1],
+      name: product[0][2], price: product[0][3]})
+    end
   end
 
   def self.first(id=1)
@@ -55,12 +59,9 @@ class Udacidata
 
   def self.destroy(id)
     product = self.find(id)
-    data = CSV.read(@@data_path).drop(1)
+    data = CSV.read(@@data_path)
     data.delete_at(product.id)
     CSV.open(@@data_path, "wb") do |csv|
-      csv << ["id", "brand", "product", "price"]
-    end
-    CSV.open(@@data_path, "ab") do |csv|
       data.each do |product|
         csv << product
       end
