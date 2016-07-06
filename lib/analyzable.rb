@@ -22,4 +22,12 @@ module Analyzable
     return "tablized report above"
   end
 
+  def count_by_brand(products)
+    return {products[0].brand => products.length}
+  end
+
+  def count_by_name(products)
+    return {products[0].name => products.length}
+  end
+
 end
