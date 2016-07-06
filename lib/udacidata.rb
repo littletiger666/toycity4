@@ -93,4 +93,26 @@ class Udacidata
     return product
   end
 
+  def update(opts={})
+    new_id = opts[:id]? opts[:id] : self.id
+    new_brand = opts[:brand]? opts[:brand] : self.brand
+    new_name = opts[:name]? opts[:name] : self.brand
+    new_price = opts[:price]? opts[:price] : self.price
+    all = self.class.all
+    new_product = all[new_id-1]
+    new_product.id = new_id
+    new_product.brand = new_brand
+    new_product.name = new_name
+    new_product.price = new_price
+    CSV.open(@@data_path, "wb") do |csv|
+      csv << ["id", "brand", "product", "price"]
+    end
+    CSV.open(@@data_path, "ab") do |csv|
+      all.each do |product|
+        csv << ["#{product.id}", "#{product.brand}", "#{product.name}", "#{product.price}"]
+      end
+    end
+    return new_product
+  end
+
 end
