@@ -7,16 +7,17 @@ class Udacidata
   @@data_path = File.dirname(__FILE__) + "/../data/data.csv"
 
   def self.create(opts={})
-    if opts[:id]
-      id = opts[:id].to_i
-      item = find(id)
-      return item unless item == nil
-    end
     item = self.new (opts)
-    CSV.open(@@data_path, "ab") do |csv|
-      csv << ["#{item.id}", "#{item.brand}", "#{item.name}", "#{item.price}"]
+    CSV.foreach(@@data_path) do |row|
+      if row [1] == item.id
+        return item
+      else
+        CSV.open(@@data_path, "ab") do |csv|
+          csv << ["#{item.id}", "#{item.brand}", "#{item.name}", "#{item.price}"]
+        end
+      end
+      return item
     end
-    return item
   end
 
   def self.all
@@ -30,58 +31,37 @@ class Udacidata
 
 
   def self.find(id)
-    data = CSV.read(@@data_path)
-    if id > data.length-1
-      raise ToyCityErrors::InvalidIdError, "not a valid ID"
+    product = self.all.find {|item| item.id == id}
+    if product
+      return product
     else
-      product = data.select { |line| line[0].to_i == id }
-      return self.new ({id: product[0][0].to_i, brand: product[0][1],
-      name: product[0][2], price: product[0][3]})
+      raise ToyCityErrors::InvalidIdError, "not a valid ID"
     end
   end
 
   def self.first(id=1)
-    result = self.all.first(id)
-    if result.length == 1
-      return result[0]
-    else
-      return result
-    end
+    return self.all.take(id)[0] if id == 1
+    return self.all.take(id) if id > 1
   end
 
   def self.last(id=1)
-    result = self.all.last(id)
-    if result.length == 1
-      return result[0]
-    else
-      return result
-    end
+    return self.all.reverse.take(id)[0] if id == 1
+    return self.all.reverse.take(id) if id > 1
   end
 
   def self.destroy(id)
     product = self.find(id)
-    data = CSV.read(@@data_path)
-    data.delete_at(product.id)
+    table = CSV.table(@@data_path)
+    table.delete_if do |row|
+      row[0] == id
+    end
     CSV.open(@@data_path, "wb") do |csv|
-      data.each do |product|
-        csv << product
+      csv << ["id", "brand", "product", "price"]
+      table.each do |row|
+        csv << row
       end
     end
     return product
-  end
-
-  def self.find_by_brand(brand)
-    data = CSV.read(@@data_path)
-    product = data.select { |line| line[1] == brand }
-    return self.new ({id: product[0][0].to_i, brand: product[0][1],
-    name: product[0][2], price: product[0][3]})
-  end
-
-  def self.find_by_name(name)
-    data = CSV.read(@@data_path)
-    product = data.select { |line| line[2] == name }
-    return self.new ({id: product[0][0].to_i, brand: product[0][1],
-    name: product[0][2], price: product[0][3]})
   end
 
   def self.where(type={})
@@ -96,24 +76,11 @@ class Udacidata
   end
 
   def update(opts={})
-    new_id = opts[:id]? opts[:id] : self.id
-    new_brand = opts[:brand]? opts[:brand] : self.brand
-    new_name = opts[:name]? opts[:name] : self.brand
-    new_price = opts[:price]? opts[:price] : self.price
-    all = self.class.all
-    new_product = all[new_id-1]
-    new_product.id = new_id
-    new_product.brand = new_brand
-    new_product.name = new_name
-    new_product.price = new_price
-    CSV.open(@@data_path, "wb") do |csv|
-      csv << ["id", "brand", "product", "price"]
-    end
-    CSV.open(@@data_path, "ab") do |csv|
-      all.each do |product|
-        csv << ["#{product.id}", "#{product.brand}", "#{product.name}", "#{product.price}"]
-      end
-    end
+    self.class.destroy(self.id)
+    new_brand = opts[:brand]? opts[:brand] : brand
+    new_name = opts[:name]? opts[:name] : brand
+    new_price = opts[:price]? opts[:price] : price
+    new_product = self.class.create ({id: self.id, brand: new_brand, name: new_name, price: new_price})
     return new_product
   end
 

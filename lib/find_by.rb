@@ -7,7 +7,7 @@ class Module
         def self.find_by_#{type}(value)
           data = self.all
           product = data.select { |item| item.#{type} == value }
-          return product
+          return product[0]
         end
       }
       class_eval(method)

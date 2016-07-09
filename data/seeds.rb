@@ -4,7 +4,7 @@ require 'faker'
 # fake data for testing purposes
 
 def db_seed
-  20.times do
+  10.times do
     # you will write the "create" method as part of your project
     opts = {brand: Faker::Company.name,
                   name: Faker::Commerce.product_name,

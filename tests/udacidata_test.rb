@@ -11,7 +11,7 @@ class TestUdacidata < MiniTest::Test
     end
     db_seed
   end
-
+#
   def test_create_method_adds_to_database
     before = CSV.read(@data_path).length
     5.times do
@@ -20,7 +20,7 @@ class TestUdacidata < MiniTest::Test
     after = CSV.read(@data_path).length
     assert(after == before + 5)
   end
-
+#
   def test_create_method_returns_product_object
      product = Product.create(brand: "ColtToys", name: "Orchid Plant", price: 2.00)
      assert_instance_of(Product, product)
